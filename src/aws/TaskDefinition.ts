@@ -1,5 +1,8 @@
 import { RegisterTaskDefinitionCommand } from "@aws-sdk/client-ecs";
 import { publicIpv4 } from "public-ip";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export const generateTaskDefinition = async (
   accessPoint: string,
@@ -16,7 +19,7 @@ export const generateTaskDefinition = async (
         image: image,
         portMappings: [
           {
-            name: "test-dev-3000-tcp",
+            name: "vite-5173",
             containerPort: 5173,
             hostPort: 5173,
             protocol: "tcp",
@@ -39,31 +42,22 @@ export const generateTaskDefinition = async (
           options: {
             "awslogs-create-group": "true",
             "awslogs-group": "/ecs/playgrounds-test",
-            "awslogs-region": "us-east-1",
+            "awslogs-region": process.env.AWS_REGION!,
             "awslogs-stream-prefix": "ecs",
           },
           secretOptions: [],
         },
-        // healthCheck: {
-        //   command: [
-        //     "CMD-SHELL",
-        //     "curl -f http://localhost:3000/health || exit 1",
-        //   ],
-        //   interval: 30,
-        //   timeout: 5,
-        //   retries: 3,
-        // },
         systemControls: [],
       },
     ],
-    taskRoleArn: "arn:aws:iam::096246688499:role/taskEFSWriteRole",
-    executionRoleArn: "arn:aws:iam::096246688499:role/taskEFSWriteRole",
+    taskRoleArn: process.env.AWS_TASK_ROLE,
+    executionRoleArn: process.env.AWS_TASK_ROLE,
     networkMode: "awsvpc",
     volumes: [
       {
         name: "react-pg",
         efsVolumeConfiguration: {
-          fileSystemId: "fs-01a88dcb7a383c904",
+          fileSystemId: process.env.EFS_ID,
           rootDirectory: "/",
           transitEncryption: "ENABLED",
           transitEncryptionPort: 2049,

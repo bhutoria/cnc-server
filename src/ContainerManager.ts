@@ -10,7 +10,7 @@ class ContainerManager {
   private containerMap: Map<string, string> = new Map();
 
   private client = new ECSClient({
-    region: "us-east-1",
+    region: process.env.AWS_REGION,
     credentials: {
       accessKeyId: process.env.AWS_ACCESS!,
       secretAccessKey: process.env.AWS_SECRET!,
